@@ -33,7 +33,7 @@ public class ClientControllers {
 
     }
 
-    @RequestMapping("/clients/{id}")
+    @RequestMapping("/clients/{id}")//devuelve un solo cliente
     public ClientDTO getClient(@PathVariable long id){
         return new ClientDTO(clientRepository.findById(id).orElse(null));
     }
