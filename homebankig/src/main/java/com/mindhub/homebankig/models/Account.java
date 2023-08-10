@@ -1,11 +1,11 @@
 package com.mindhub.homebankig.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Account {
@@ -15,18 +15,27 @@ public class Account {
 
     private Long id;
     private String number;
-    private LocalDate creationDate;
-    private LocalDateTime localDateTime;
+    private LocalDateTime date;
     private Double balance;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     private Client client;
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+    private Set<Transaction> transaction = new HashSet<>();
+
+    public Set<Transaction> getTransaction() {
+        return transaction;
+    }
+    public void addTransaction(Transaction transaction) {
+        transaction.setAccount(this);
+        this.transaction.add(transaction);
+    }
     public Account() {
     }
-    public Account(String number, LocalDate creationDate, LocalDateTime localDateTime, Double balance, Client client) {
+    public Account(String number, LocalDateTime creationDate, Double balance, Client client) {
         this.number = number;
-        this.creationDate = creationDate;
-        this.localDateTime = localDateTime;
+        this.date = creationDate;
         this.balance = balance;
         this.client = client;
     }
@@ -42,20 +51,12 @@ public class Account {
         this.number = number;
     }
 
-    public LocalDate getCreationDate() {
-        return creationDate;
+    public LocalDateTime getCreationDate() {
+        return date;
     }
 
-    public void setCreationDate(LocalDate creationDate) {
-        this.creationDate = creationDate;
-    }
-
-    public LocalDateTime getLocalDateTime() {
-        return localDateTime;
-    }
-
-    public void setLocalDateTime(LocalDateTime localDateTime) {
-        this.localDateTime = localDateTime;
+    public void setCreationDate(LocalDateTime creationDate) {
+        this.date = creationDate;
     }
 
     public Double getBalance() {

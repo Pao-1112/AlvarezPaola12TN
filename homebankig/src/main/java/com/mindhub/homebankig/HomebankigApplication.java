@@ -2,14 +2,14 @@ package com.mindhub.homebankig;
 
 import com.mindhub.homebankig.models.Account;
 import com.mindhub.homebankig.models.Client;
+import com.mindhub.homebankig.models.Transaction;
+import com.mindhub.homebankig.models.TransactionType;
 import com.mindhub.homebankig.repositories.AccountRepository;
 import com.mindhub.homebankig.repositories.ClientRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @SpringBootApplication
@@ -45,17 +45,15 @@ public class HomebankigApplication {
 			//Agrego un numero de cuenta y dinero en las tres cuentas
 			account1.setNumber("VIN001");
 			account1.setBalance(5000.00);
-			account1.setCreationDate(LocalDate.now());
-			account1.setLocalDateTime(LocalDateTime.now());
+			account1.setCreationDate(LocalDateTime.now());
 
 			account2.setNumber("VIN002");
 			account2.setBalance(7500.00);
-			account2.setCreationDate(LocalDate.now().plusDays(1));
+			account2.setCreationDate(LocalDateTime.now().plusDays(1));
 
 			account3.setNumber("VIN003");
 			account3.setBalance(10000.00);
-			account3.setCreationDate(LocalDate.EPOCH.minusDays(2));
-			account3.setLocalDateTime(LocalDateTime.now());
+			account3.setCreationDate(LocalDateTime.of(2023, 8, 1, 22, 20, 32, 23));
 
 			//Le asigno al cliente 1 y 2 las cuentas 1 y 2 con su contenido
 			client1.addAccount(account1);
@@ -65,7 +63,26 @@ public class HomebankigApplication {
 			accountRepository.save(account1);
 			accountRepository.save(account2);
 			accountRepository.save(account3);
+
+			//Creo tres transacciones, una para cada cuenta
+			Transaction transaction1 = new Transaction();
+			Transaction transaction2 = new Transaction();
+			Transaction transaction3 = new Transaction();
+
+			transaction1.setType(TransactionType.DEBIT);
+			transaction1.setAmount(-300.0);
+			transaction1.setDescription("Debit");
+			transaction1.setDate(LocalDateTime.now());
+
+			transaction2.setType(TransactionType.CREDIT);
+			transaction2.setAmount(7700.50);
+			transaction2.setDescription("Credit");
+			transaction2.setDate(LocalDateTime.of(2023, 8, 7, 21, 15, 33));
+
+			transaction3.setType(TransactionType.DEBIT);
+			transaction3.setAmount(-80000.0);
+			transaction3.setDescription("Debit");
+			transaction3.setDate(LocalDateTime.now());
 		};
 	}
-
 }
