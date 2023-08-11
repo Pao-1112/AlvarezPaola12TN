@@ -12,6 +12,7 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native",strategy = "native")
 
+
     private Long id;
     private String firstName;
     private String lastName;
@@ -25,10 +26,13 @@ public class Client {
         return accounts;
     }
 
+    public void addAccount(Account account) {
+        account.setClient(this);
+        this.accounts.add(account);
+    }
     public Client(){
 
     }
-
     public Client(String firstName, String lastName, String email) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -60,10 +64,6 @@ public class Client {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-    public void addAccount(Account account) {
-        account.setClient(this);
-        this.accounts.add(account);
     }
 
 }

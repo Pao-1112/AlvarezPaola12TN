@@ -1,10 +1,11 @@
 package com.mindhub.homebankig.models;
 
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -20,17 +21,6 @@ public class Account {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     private Client client;
-
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
-    private Set<Transaction> transaction = new HashSet<>();
-
-    public Set<Transaction> getTransaction() {
-        return transaction;
-    }
-    public void addTransaction(Transaction transaction) {
-        transaction.setAccount(this);
-        this.transaction.add(transaction);
-    }
     public Account() {
     }
     public Account(String number, LocalDateTime creationDate, Double balance, Client client) {
@@ -39,6 +29,14 @@ public class Account {
         this.balance = balance;
         this.client = client;
     }
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+    private Set<Transaction> transactions = new HashSet<>();
+
+    public void addTransaction(Transaction transaction) {
+        transaction.setAccount(this);
+        this.transactions.add(transaction);
+    }
+
     public Long getId() {
         return id;
     }
@@ -51,12 +49,12 @@ public class Account {
         this.number = number;
     }
 
-    public LocalDateTime getCreationDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setCreationDate(LocalDateTime creationDate) {
-        this.date = creationDate;
+    public void setDate(LocalDateTime date) {
+        this.date = date;
     }
 
     public Double getBalance() {
@@ -73,5 +71,9 @@ public class Account {
 
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public Set<Transaction> getTransactions() {
+        return transactions;
     }
 }

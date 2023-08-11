@@ -28,7 +28,7 @@ public class AccountControllers {
 
         return listAccountDTO;
     }
-    @RequestMapping("/accounts/{id}")//devuelve una sola cuenta
+    @RequestMapping("/accounts/{id}")
     public AccountDTO getAccounts(@PathVariable long id){
         return new AccountDTO(accountRepository.findById(id).orElse(null));
     }

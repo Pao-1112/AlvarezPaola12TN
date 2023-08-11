@@ -28,8 +28,8 @@ public class ClientControllers {
         return listClientDTO;
     }
 
-    @RequestMapping("/clients/{id}")//devuelve un solo cliente
-    public ClientDTO getClients(@PathVariable long id){
+    @RequestMapping("/clients/{id}")
+    public ClientDTO getClient(@PathVariable long id){
         return new ClientDTO(clientRepository.findById(id).orElse(null));
     }
 }
