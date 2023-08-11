@@ -56,7 +56,7 @@ public class HomebankigApplication {
 			client1.addAccount(account1);
 			client1.addAccount(account2);
 			client2.addAccount(account3);
-			//Guardo las cuentas en la base de datos
+
 			accountRepository.save(account1);
 			accountRepository.save(account2);
 			accountRepository.save(account3);
@@ -80,15 +80,14 @@ public class HomebankigApplication {
 			transaction3.setDescription("Debit");
 			transaction3.setDate(LocalDateTime.now());
 
+			account1.addTransaction(transaction1);
+			account2.addTransaction(transaction2);
+			account3.addTransaction(transaction3);
 
 			transactionRepository.save(transaction1);
 			transactionRepository.save(transaction2);
 			transactionRepository.save(transaction3);
 
-			account1.addTransaction(transaction1);
-			account2.addTransaction(transaction2);
-			account3.addTransaction(transaction3);
 		};
 	}
-
 }

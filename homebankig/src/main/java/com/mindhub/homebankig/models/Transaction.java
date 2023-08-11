@@ -16,6 +16,7 @@ public class Transaction {
     private String description;
     private LocalDateTime date;
     @ManyToOne(fetch = FetchType.EAGER)
+
     private Account account;
     public Transaction() {
     }
