@@ -3,9 +3,7 @@ package com.mindhub.homebankig.models;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 @Entity
@@ -21,16 +19,17 @@ public class Account {
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     private Client client;
+
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
+    private Set<Transaction> transactions = new HashSet<>();
     public Account() {
     }
-    public Account(String number, LocalDateTime creationDate, Double balance, Client client) {
+    public Account(String number, LocalDateTime date, Double balance, Client client) {
         this.number = number;
-        this.date = creationDate;
+        this.date = date;
         this.balance = balance;
         this.client = client;
     }
-    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER)
-    private Set<Transaction> transactions = new HashSet<>();
 
     public void addTransaction(Transaction transaction) {
         transaction.setAccount(this);

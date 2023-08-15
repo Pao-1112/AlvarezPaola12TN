@@ -3,7 +3,9 @@ package com.mindhub.homebankig.models;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -11,7 +13,6 @@ public class Client {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native",strategy = "native")
-
 
     private Long id;
     private String firstName;
@@ -22,14 +23,9 @@ public class Client {
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Account> accounts = new HashSet<>();
 
-    public Set<Account> getAccounts() {
-        return accounts;
-    }
+    @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
+    private Set<ClientLoan> clientLoans = new HashSet<>();
 
-    public void addAccount(Account account) {
-        account.setClient(this);
-        this.accounts.add(account);
-    }
     public Client(){
 
     }
@@ -46,24 +42,46 @@ public class Client {
         return firstName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
     public void setFirstName(String firstName) {
         this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public Set<Account> getAccounts() {
+        return accounts;
+    }
+
+    public Set<ClientLoan> getClientLoans() {
+        return clientLoans;
+    }
+
+    public void addAccount(Account account) {
+        account.setClient(this);
+        this.accounts.add(account);
+    }
+
+    public void addLoan(ClientLoan clientLoan){
+        clientLoan.setClient(this);
+        this.clientLoans.add(clientLoan);
+    }
+
+    public List<ClientLoan>getLoans(){
+        return new ArrayList<>(clientLoans);
     }
 
 }
