@@ -24,16 +24,10 @@ public class Account {
     private Set<Transaction> transactions = new HashSet<>();
     public Account() {
     }
-    public Account(String number, LocalDateTime date, Double balance, Client client) {
+    public Account(String number, LocalDateTime date, Double balance) {
         this.number = number;
         this.date = date;
         this.balance = balance;
-        this.client = client;
-    }
-
-    public void addTransaction(Transaction transaction) {
-        transaction.setAccount(this);
-        this.transactions.add(transaction);
     }
 
     public Long getId() {
@@ -74,5 +68,10 @@ public class Account {
 
     public Set<Transaction> getTransactions() {
         return transactions;
+    }
+
+    public void addTransaction(Transaction transaction) {
+        transaction.setAccount(this);
+        this.transactions.add(transaction);
     }
 }

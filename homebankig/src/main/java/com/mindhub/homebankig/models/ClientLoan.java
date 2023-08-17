@@ -25,11 +25,9 @@ public class ClientLoan {
     public ClientLoan() {
     }
 
-    public ClientLoan(Double amount, Integer payments, Client client, Loan loan) {
+    public ClientLoan(Double amount, Integer payments) {
         this.amount = amount;
         this.payments = payments;
-        this.client = client;
-        this.loan = loan;
     }
 
     public Long getId() {
@@ -52,12 +50,12 @@ public class ClientLoan {
         this.payments = payments;
     }
 
-    public Client getClient() {
-        return client;
-    }
-
     public void setClient(Client client) {
         this.client = client;
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     public Loan getLoan() {

@@ -6,9 +6,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
 import java.util.Set;
 
 @SpringBootApplication
@@ -20,7 +19,7 @@ public class HomebankigApplication {
 	}
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository,
-									  LoanRepository loanRepository, ClientLoanRepository clientLoanRepository){
+									  LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
 		return (args) ->{
 			//Client
 			Client client1 = new Client();
@@ -141,6 +140,55 @@ public class HomebankigApplication {
 			clientLoanRepository.save(clientLoan2);
 			clientLoanRepository.save(clientLoan3);
 			clientLoanRepository.save(clientLoan4);
+
+			//Card
+			Card card1 = new Card();
+			Card card2 = new Card();
+			Card card3 = new Card();
+			Card card4 = new Card();
+
+			card1.setCardHolder(client1.getFirstName()+" "+client1.getLastName());
+			card1.setType(CardType.DEBIT);
+			card1.setColor(CardColor.GOLD);
+			card1.setNumber("4444 5445 3331 5578");
+			card1.setCvv(153);
+			card1.setFromDate(LocalDateTime.now());
+			card1.setThruDate(LocalDateTime.now().plusYears(5));
+
+			card2.setCardHolder(client1.getFirstName()+" "+client1.getLastName());
+			card2.setType(CardType.CREDIT);
+			card2.setColor(CardColor.TITANIUM);
+			card2.setNumber("3312 5548 7775 1224");
+			card2.setCvv(236);
+			card2.setFromDate(LocalDateTime.now());
+			card2.setThruDate(LocalDateTime.now().plusYears(5));
+
+			card3.setCardHolder(client2.getFirstName()+" "+ client2.getLastName());
+			card3.setType(CardType.DEBIT);
+			card3.setColor(CardColor.GOLD);
+			card3.setNumber("3214 6584 6574 9987");
+			card3.setCvv(155);
+			card3.setFromDate(LocalDateTime.now());
+			card3.setThruDate(LocalDateTime.now().plusYears(5));
+
+			card4.setCardHolder(client2.getFirstName()+" "+client2.getLastName());
+			card4.setType(CardType.CREDIT);
+			card4.setColor(CardColor.SILVER);
+			card4.setNumber("7778 2224 7584 3321");
+			card4.setCvv(232);
+			card4.setFromDate(LocalDateTime.now());
+			card4.setThruDate(LocalDateTime.now().plusYears(5));
+
+			//Card in Client
+			client1.addCard(card1);
+			client1.addCard(card2);
+			client2.addCard(card3);
+			client2.addCard(card4);
+
+			cardRepository.save(card1);
+			cardRepository.save(card2);
+			cardRepository.save(card3);
+			cardRepository.save(card4);
 
 		};
 	}
