@@ -36,27 +36,21 @@ public class ClientDTO {
     public Long getId() {
         return id;
     }
-
     public String getFirstName() {
         return firstName;
     }
-
     public String getLastName() {
         return lastName;
     }
-
     public String getEmail() {
         return email;
     }
-
     public Set<AccountDTO> getAccounts() {
         return accounts;
     }
-
     public Set<ClientLoanDTO> getLoans() {
         return loans;
     }
-
     public Set<CardDTO> getCards() {
         return cards;
     }

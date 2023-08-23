@@ -25,19 +25,15 @@ public class AccountDTO {
                 .collect(Collectors.toSet());
     }
     public Long getId() {return id;}
-
     public String getNumber() {
         return number;
     }
-
     public LocalDateTime getDate() {
         return date;
     }
-
     public Double getBalance() {
         return balance;
     }
-
     public Set<TransactionDTO> getTransactions() {
         return transactions;
     }

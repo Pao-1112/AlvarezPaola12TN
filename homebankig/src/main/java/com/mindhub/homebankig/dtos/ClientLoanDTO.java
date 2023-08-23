@@ -15,23 +15,18 @@ public class ClientLoanDTO {
         payments = clientLoan.getPayments();
         loans_id = clientLoan.getLoan().getId();
     }
-
     public Long getId() {
         return id;
     }
-
     public String getName() {
         return name;
     }
-
     public Double getAmount() {
         return amount;
     }
-
     public Integer getPayments() {
         return payments;
     }
-
     public Long getLoans_id() {
         return loans_id;
     }

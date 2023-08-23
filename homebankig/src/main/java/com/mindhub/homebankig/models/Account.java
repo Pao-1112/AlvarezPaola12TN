@@ -29,30 +29,22 @@ public class Account {
         this.creationDate = date;
         this.balance = balance;
     }
-
     public Long getId() {
         return id;
     }
-
     public String getNumber() {
         return number;
     }
-
     public void setNumber(String number) {
         this.number = number;
     }
-
-    public LocalDateTime getCreationDate() {
-        return creationDate;
-    }
+    public LocalDateTime getCreationDate() { return creationDate; }
     public void setCreationDate(LocalDateTime creationDate) {
         this.creationDate = creationDate;
     }
-
     public Double getBalance() {
         return balance;
     }
-
     public void setBalance(Double balance) {
         this.balance = balance;
     }
@@ -60,15 +52,12 @@ public class Account {
     public Client getClient() {
         return client;
     }
-
     public void setClient(Client client) {
         this.client = client;
     }
-
     public Set<Transaction> getTransactions() {
         return transactions;
     }
-
     public void addTransaction(Transaction transaction) {
         transaction.setAccount(this);
         this.transactions.add(transaction);

@@ -31,5 +31,4 @@ public class TransactionControllers {
     public TransactionDTO getTransactions(@PathVariable long id){
         return new TransactionDTO(transactionRepository.findById(id).orElse(null));
     }
-
 }

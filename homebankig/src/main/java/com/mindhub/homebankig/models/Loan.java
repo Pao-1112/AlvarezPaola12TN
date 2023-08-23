@@ -31,39 +31,30 @@ public class Loan {
         this.maxAmount = maxAmount;
         this.payments = payments;
     }
-
     public Long getId() {
         return id;
     }
-
     public String getName() {
         return name;
     }
-
     public void setName(String name) {
         this.name = name;
     }
-
     public Double getMaxAmount() {
         return maxAmount;
     }
-
     public void setMaxAmount(Double maxAmount) {
         this.maxAmount = maxAmount;
     }
-
     public Set<Integer> getPayments() {
         return payments;
     }
-
     public void setPayments(Set<Integer> payments) {
         this.payments = payments;
     }
-
     public Set<ClientLoan> getClientLoans() {
         return clientLoans;
     }
-
     public void addClient(ClientLoan clientLoan){
         clientLoan.setLoan(this);
         this.clientLoans.add(clientLoan);
