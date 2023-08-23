@@ -68,7 +68,7 @@ public class Loan {
         clientLoan.setLoan(this);
         this.clientLoans.add(clientLoan);
     }
-    @JsonIgnore
+    //@JsonIgnore
     public List<Client> getClients() {
         return clientLoans
                 .stream()

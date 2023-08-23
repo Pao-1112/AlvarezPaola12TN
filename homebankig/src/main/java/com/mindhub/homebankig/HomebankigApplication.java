@@ -2,10 +2,13 @@ package com.mindhub.homebankig;
 
 import com.mindhub.homebankig.models.*;
 import com.mindhub.homebankig.repositories.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -17,23 +20,38 @@ public class HomebankigApplication {
 
 		SpringApplication.run(HomebankigApplication.class, args);
 	}
+	@Autowired
+	private PasswordEncoder passwordEncoder;
 	@Bean
-	public CommandLineRunner initData(ClientRepository clientRepository, AccountRepository accountRepository, TransactionRepository transactionRepository,
-									  LoanRepository loanRepository, ClientLoanRepository clientLoanRepository, CardRepository cardRepository){
+	public CommandLineRunner initData(ClientRepository clientRepository,
+									  AccountRepository accountRepository,
+									  TransactionRepository transactionRepository,
+									  LoanRepository loanRepository,
+									  ClientLoanRepository clientLoanRepository,
+									  CardRepository cardRepository){
 		return (args) ->{
 			//Client
 			Client client1 = new Client();
 			client1.setFirstName("Melba");
 			client1.setLastName("Morel");
 			client1.setEmail("melba@mindhub.com");
+			client1.setPassword(passwordEncoder.encode("123456"));
 
 			Client client2 = new Client();
 			client2.setFirstName("Juan");
 			client2.setLastName("Perez");
 			client2.setEmail("juan@mindhub.com");
+			client2.setPassword(passwordEncoder.encode("123456"));
+
+			Client admin = new Client();
+			admin.setFirstName("admin");
+			admin.setLastName("admin");
+			admin.setEmail("admin@mindhub.com");
+			admin.setPassword(passwordEncoder.encode("123456"));
 
 			clientRepository.save(client1);
 			clientRepository.save(client2);
+			clientRepository.save(admin);
 
 			//Account
 			Account account1 = new Account();
@@ -42,15 +60,15 @@ public class HomebankigApplication {
 
 			account1.setNumber("VIN001");
 			account1.setBalance(5000.00);
-			account1.setDate(LocalDateTime.now());
+			account1.setCreationDate(LocalDateTime.now());
 
 			account2.setNumber("VIN002");
 			account2.setBalance(7500.00);
-			account2.setDate(LocalDateTime.now().plusDays(1));
+			account2.setCreationDate(LocalDateTime.now().plusDays(1));
 
 			account3.setNumber("VIN003");
 			account3.setBalance(10000.00);
-			account3.setDate(LocalDateTime.of(2023, 8, 1, 22, 20, 32, 23));
+			account3.setCreationDate(LocalDateTime.of(2023, 8, 1, 22, 20, 32, 23));
 
 			//Accounts in Clients
 			client1.addAccount(account1);
@@ -147,7 +165,6 @@ public class HomebankigApplication {
 			Card card3 = new Card();
 			Card card4 = new Card();
 
-			card1.setCardHolder(client1.getFirstName()+" "+client1.getLastName());
 			card1.setType(CardType.DEBIT);
 			card1.setColor(CardColor.GOLD);
 			card1.setNumber("4444 5445 3331 5578");
