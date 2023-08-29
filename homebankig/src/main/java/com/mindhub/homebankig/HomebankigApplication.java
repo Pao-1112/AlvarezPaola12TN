@@ -46,7 +46,7 @@ public class HomebankigApplication {
 			Client admin = new Client();
 			admin.setFirstName("admin");
 			admin.setLastName("admin");
-			admin.setEmail("admin@mindhub.com");
+			admin.setEmail("admin@admin.com");
 			admin.setPassword(passwordEncoder.encode("123456"));
 
 			clientRepository.save(client1);

@@ -22,7 +22,7 @@ public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
         auth.userDetailsService(inputName ->{
             Client client = clientRepository.findByEmail(inputName);
             if (client != null){
-                if(client.getEmail().equals("admin@mindhub.com")){
+                if(client.getEmail().endsWith("@admin.com")){ //el email termina con
                     return new User(client.getEmail(), client.getPassword(),
                             AuthorityUtils.createAuthorityList("ADMIN"));
                 }else {
@@ -30,7 +30,7 @@ public class WebAuthentication extends GlobalAuthenticationConfigurerAdapter {
                             AuthorityUtils.createAuthorityList("CLIENT"));
                 }
             }else {
-                throw new UsernameNotFoundException("Unknown user: "+ inputName);
+                throw new UsernameNotFoundException("Unknown user: "+ inputName);//Excepcion escondida, para que no se rompa el código
             }
         });
     }

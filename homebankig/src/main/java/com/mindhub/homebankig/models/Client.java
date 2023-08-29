@@ -17,6 +17,7 @@ public class Client {
     private Long id;
     private String firstName;
     private String lastName;
+    @Column(unique = true)// para no repetir email
     private String email;
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Account> accounts = new HashSet<>();
@@ -25,10 +26,7 @@ public class Client {
     @OneToMany(mappedBy = "client", fetch = FetchType.EAGER)
     private Set<Card> cards= new HashSet<>();
     private String password;
-
-    public Client(){
-
-    }
+    public Client(){}
     public Client(String firstName, String lastName, String email, String password) {
         this.firstName = firstName;
         this.lastName = lastName;

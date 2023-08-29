@@ -14,15 +14,14 @@ import javax.servlet.http.HttpSession;
 
 @EnableWebSecurity
 @Configuration
-public class WebAuthorization extends WebSecurityConfigurerAdapter {
+public class WebAuthorization extends WebSecurityConfigurerAdapter { // Maneja las reglas del servidor
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()
-                .antMatchers("/web/index.html", "/web/css/**", "/web/img/**", "/web/js/**").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/login", "/api/logout","/api/clients").permitAll()
-                .antMatchers("/web/admin").hasAuthority("ADMIN")
-                .antMatchers("/api/clients", "/api/clients/**").hasAnyAuthority("ADMIN","CLIENT")
-                .antMatchers("/web/**", "/web/css/**").hasAnyAuthority("CLIENT", "ADMIN");
+        http.authorizeRequests()// ordenado de lo mas accesible a lo menos o mas especifico de un cliente o admin
+                .antMatchers("/web/**").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/clients").permitAll()
+                .antMatchers("/api/clients/current").hasAnyAuthority("Admin", "CLIENT")
+                .antMatchers("/h2-console/**", "/api/clients/{id}", "/rest/**").hasAuthority("ADMIN");
 
         http.formLogin()
                 .usernameParameter("email")
