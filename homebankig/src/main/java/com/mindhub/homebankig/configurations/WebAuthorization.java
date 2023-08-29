@@ -18,10 +18,10 @@ public class WebAuthorization extends WebSecurityConfigurerAdapter { // Maneja l
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests()// ordenado de lo mas accesible a lo menos o mas especifico de un cliente o admin
-                .antMatchers("/web/**").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/clients").permitAll()
-                .antMatchers("/api/clients/current").hasAnyAuthority("Admin", "CLIENT")
-                .antMatchers("/h2-console/**", "/api/clients/{id}", "/rest/**").hasAuthority("ADMIN");
+                .antMatchers(HttpMethod.POST,"/api/clients","/api/login").permitAll()
+                .antMatchers("/web/index.html", "/web/img/**", "/web/js/index.js","/web/css/style.css", "/web/accounts.html","/web/js/accounts.js", "/favicon.ico").permitAll()
+                .antMatchers("/api/clients/current","/api/accounts/{id}","/api/clients","/web/cards.html", "/web/js/cards.js","/web/create-cards.html", "/web/js/create-cards.js").hasAnyAuthority("Admin", "CLIENT")
+                .antMatchers("/h2-console/**", "/rest/**").hasAuthority("ADMIN");
 
         http.formLogin()
                 .usernameParameter("email")

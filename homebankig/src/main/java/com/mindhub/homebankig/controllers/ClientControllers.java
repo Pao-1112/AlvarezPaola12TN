@@ -13,6 +13,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -76,5 +77,25 @@ public class ClientControllers {
         }
         clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password)));
         return new ResponseEntity<>(HttpStatus.CREATED);
+    }
+    public int getRandomNumber(int min, int max){
+        return (int) ((Math.random() * (max - min)+min));
+    }
+    @PostMapping ("/clients/current/accounts")
+    public ResponseEntity<Account>createAccount(Client client){
+        if (client != null){
+            Account account;
+            int accountNumber = getRandomNumber(10000000, 99999999);
+
+            if (client.getAccounts().size()>=3){
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+            }else {
+                account = new Account(("VIN-" + accountNumber), LocalDateTime.now(), 0d);
+                client.addAccount(account);
+                accountRepository.save(account);
+                return new ResponseEntity<>(HttpStatus.CREATED);
+            }
+        }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 }
