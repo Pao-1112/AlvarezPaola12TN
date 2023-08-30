@@ -60,15 +60,15 @@ public class HomebankigApplication {
 
 			account1.setNumber("VIN001");
 			account1.setBalance(5000.00);
-			account1.setCreationDate(LocalDateTime.now());
+			account1.setDate(LocalDateTime.now());
 
 			account2.setNumber("VIN002");
 			account2.setBalance(7500.00);
-			account2.setCreationDate(LocalDateTime.now().plusDays(1));
+			account2.setDate(LocalDateTime.now().plusDays(1));
 
 			account3.setNumber("VIN003");
 			account3.setBalance(10000.00);
-			account3.setCreationDate(LocalDateTime.of(2023, 8, 1, 22, 20, 32, 23));
+			account3.setDate(LocalDateTime.of(2023, 8, 1, 22, 20, 32, 23));
 
 			//Accounts in Clients
 			client1.addAccount(account1);

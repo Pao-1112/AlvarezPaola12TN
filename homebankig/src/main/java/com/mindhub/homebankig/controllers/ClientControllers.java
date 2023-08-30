@@ -64,8 +64,11 @@ public class ClientControllers {
        Client client = clientRepository.findByEmail(authentication.getName());
        return new ClientDTO(client);
    }
+    public int getRandomClientNumber(int min, int max){
+        return (int) ((Math.random() * (max - min)+min));
+    }
     @RequestMapping(path = "/clients", method = RequestMethod.POST)
-    public ResponseEntity<Object> register(@RequestParam String firstName,
+    public ResponseEntity<Object> registerClient(@RequestParam String firstName,
                                            @RequestParam String lastName,
                                            @RequestParam String email,
                                            @RequestParam String password) {
@@ -75,27 +78,13 @@ public class ClientControllers {
         if (clientRepository.findByEmail(email) !=  null) {
             return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
         }
-        clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password)));
-        return new ResponseEntity<>(HttpStatus.CREATED);
-    }
-    public int getRandomNumber(int min, int max){
-        return (int) ((Math.random() * (max - min)+min));
-    }
-    @PostMapping ("/clients/current/accounts")
-    public ResponseEntity<Account>createAccount(Client client){
-        if (client != null){
-            Account account;
-            int accountNumber = getRandomNumber(10000000, 99999999);
+        Client client = new Client(firstName, lastName, email, passwordEncoder.encode(password));
+        int accountNumber = getRandomClientNumber(10000000, 99999999);
+        Account account = new Account(("VIN-" + accountNumber), LocalDateTime.now(), 0d);
+        accountRepository.save(account);
+        clientRepository.save(client);
+        client.addAccount(account);
 
-            if (client.getAccounts().size()>=3){
-                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
-            }else {
-                account = new Account(("VIN-" + accountNumber), LocalDateTime.now(), 0d);
-                client.addAccount(account);
-                accountRepository.save(account);
-                return new ResponseEntity<>(HttpStatus.CREATED);
-            }
-        }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }
