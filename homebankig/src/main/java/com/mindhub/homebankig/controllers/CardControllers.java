@@ -1,7 +1,6 @@
 package com.mindhub.homebankig.controllers;
 
 import com.mindhub.homebankig.dtos.CardDTO;
-import com.mindhub.homebankig.dtos.ClientDTO;
 import com.mindhub.homebankig.models.*;
 import com.mindhub.homebankig.repositories.CardRepository;
 import com.mindhub.homebankig.repositories.ClientRepository;
@@ -9,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -65,10 +65,11 @@ public class CardControllers {
         long devitCounter = cards.stream().filter(card -> card.getType() == CardType.DEBIT).count();
         long creditCount = cards.stream().filter(card -> card.getType() == CardType.CREDIT).count();
 
-        if (devitCounter >= 3){
+        if (devitCounter >= 3 || creditCount >= 3 ){
             return new ResponseEntity<>("403 forbidden", HttpStatus.FORBIDDEN);
         }else {
             CardType cardType = CardType.DEBIT;
+            CardType cardType1 = CardType.CREDIT;
 
             String cardNumber = getCardNumbers();
             int cvv = getRandomCvvNumber(100, 999);
@@ -77,9 +78,13 @@ public class CardControllers {
             LocalDateTime fromDate = thruDate.plusYears(5);
 
             Card card;
+            Card card1;
             card = new Card(client.getFirstName() + " " + client.getLastName(), cardType, color, cardNumber, cvv, thruDate, fromDate);
             client.addCard(card);
             cardRepository.save(card);
+            card1 = new Card(client.getFirstName() + " " + client.getLastName(), cardType1, color, cardNumber, cvv, thruDate, fromDate);
+            client.addCard(card1);
+            cardRepository.save(card1);
             return new ResponseEntity<>("201 created", HttpStatus.CREATED);
         }
     }

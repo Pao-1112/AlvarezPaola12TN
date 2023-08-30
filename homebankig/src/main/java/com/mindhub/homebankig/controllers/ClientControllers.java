@@ -13,42 +13,31 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api")
 public class ClientControllers {
+
+    @Autowired
+    private  AccountRepository accountRepository;
     @Autowired
     private ClientRepository clientRepository;
     @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
     private PasswordEncoder passwordEncoder;
-    @RequestMapping("/clients")//Lista de clientes
+
+    @RequestMapping("/clients")
     public List<ClientDTO> getClients(){
-        List<Client> listClient = clientRepository.findAll();
-        List<ClientDTO> listClientDTO =
-                listClient
-                        .stream()
-                        .map(client -> new ClientDTO(client))
-                        .collect(Collectors.toList());
-
-        return listClientDTO;
+        return clientRepository.findAll().stream().map(client->new ClientDTO(client)).collect(Collectors.toList());
     }
-    @RequestMapping("/admin") // lista de admins
+
+    @RequestMapping("/admin")
     public List<ClientDTO> getAdmin(){
-        List<Client> listAdmin = clientRepository.findAll();
-        List<ClientDTO> listClientDTO =
-                listAdmin
-                        .stream()
-                        .map(admin -> new ClientDTO(admin))
-                        .collect(Collectors.toList());
-
-        return listClientDTO;
+        return clientRepository.findAll().stream().map(admin->new ClientDTO(admin)).collect(Collectors.toList());
     }
-    @RequestMapping("/client/{id}")// Puede devolver una cuenta por cliente especifico si existe
+
+    @RequestMapping("/clients/{id}")
     public ResponseEntity<Object>getClient(@PathVariable long id, Authentication authentication){
         Client client = clientRepository.findByEmail(authentication.getName());
         Account account = accountRepository.findById(id).orElse(null);
@@ -59,16 +48,15 @@ public class ClientControllers {
             return new ResponseEntity<>("The account is invalid", HttpStatus.I_AM_A_TEAPOT);
         }
     }
-   @RequestMapping("/client/current")
-   public ClientDTO getAll(Authentication authentication) {
-       Client client = clientRepository.findByEmail(authentication.getName());
-       return new ClientDTO(client);
-   }
-    public int getRandomClientNumber(int min, int max){
-        return (int) ((Math.random() * (max - min)+min));
+
+    @RequestMapping("/clients/current")
+    public ClientDTO getClient(Authentication authentication){
+        Client client = clientRepository.findByEmail(authentication.getName());
+        return  new ClientDTO(client);
     }
+
     @RequestMapping(path = "/clients", method = RequestMethod.POST)
-    public ResponseEntity<Object> registerClient(@RequestParam String firstName,
+    public ResponseEntity<Object> register(@RequestParam String firstName,
                                            @RequestParam String lastName,
                                            @RequestParam String email,
                                            @RequestParam String password) {
@@ -78,13 +66,7 @@ public class ClientControllers {
         if (clientRepository.findByEmail(email) !=  null) {
             return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);
         }
-        Client client = new Client(firstName, lastName, email, passwordEncoder.encode(password));
-        int accountNumber = getRandomClientNumber(10000000, 99999999);
-        Account account = new Account(("VIN-" + accountNumber), LocalDateTime.now(), 0d);
-        accountRepository.save(account);
-        clientRepository.save(client);
-        client.addAccount(account);
-
+        clientRepository.save(new Client(firstName, lastName, email, passwordEncoder.encode(password)));
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 }

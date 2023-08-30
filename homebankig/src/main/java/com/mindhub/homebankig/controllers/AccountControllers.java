@@ -4,9 +4,11 @@ import com.mindhub.homebankig.dtos.AccountDTO;
 import com.mindhub.homebankig.models.Account;
 import com.mindhub.homebankig.models.Client;
 import com.mindhub.homebankig.repositories.AccountRepository;
+import com.mindhub.homebankig.repositories.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,6 +23,8 @@ import java.util.stream.Collectors;
 public class AccountControllers {
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private ClientRepository clientRepository;
     @RequestMapping("/accounts")
     public List<AccountDTO> getAccounts(){
 
@@ -41,7 +45,8 @@ public class AccountControllers {
         return (int) ((Math.random() * (max - min) + min));
     }
     @PostMapping("/clients/current/accounts")
-    public ResponseEntity<Account> registerAccount(Client client){
+    public ResponseEntity<Account> registerAccount(Authentication authentication, Client client){
+        client = clientRepository.findByEmail(authentication.getName());
         if (client != null){
             Account account;
             int accountNumber = getRandomNumber(10000000, 99999999);
