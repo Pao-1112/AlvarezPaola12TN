@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -39,7 +38,7 @@ public class CardControllers {
         return new CardDTO(cardRepository.findById(id).orElse(null));
     }
     public int getRandomCardNumber(int min1, int max1){
-        return (int)((Math.random() * (max1 - min1)) - min1);
+        return (int)((Math.random() * (max1 - min1)) + min1);
     }
     public String getRandomCardNumber(){
         int cardRandomNumber = getRandomCardNumber(0001, 9999);
@@ -56,68 +55,44 @@ public class CardControllers {
     public int getRandomCvvNumber(int min2, int max2){
         return (int) ((Math.random() * (max2 - min2)) + min2);
     }
-    @RequestMapping(path = "/clients/current/cards", method = RequestMethod.POST)
-    public ResponseEntity<Object> registerCard(Authentication authentication,
+    @PostMapping("/clients/current/cards")
+    public ResponseEntity<CardDTO> registerCard(Authentication authentication,
                                                @RequestParam CardType type,
                                                @RequestParam CardColor color){
         Client client = clientRepository.findByEmail(authentication.getName());
-        Set<Card> cards = client.getCards();
-        long devitCounter = cards.stream().filter(card -> card.getType() == CardType.DEBIT).count();
-        long creditCounter = cards.stream().filter(card -> card.getType() == CardType.CREDIT).count();
+        if (authentication != null){
+            Set<Card> cards = client.getCards();
+            long devitCounter = cards.stream().filter(card -> card.getType() == CardType.DEBIT).count();
+            long creditCounter = cards.stream().filter(card -> card.getType() == CardType.CREDIT).count();
 
-        CardType cardType1 = CardType.DEBIT;
-        CardType cardType2 = CardType.CREDIT;
+            if(devitCounter >= 3){
 
-        CardColor color1 = CardColor.GOLD;
-        CardColor color2 = CardColor.SILVER;
-        CardColor color3 = CardColor.TITANIUM;
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
-        String cardNumber = getCardNumbers();
-        int cvv = getRandomCvvNumber(100, 999);
+            }else if(creditCounter >=3){
 
-        LocalDateTime thruDate = LocalDateTime.now();
-        LocalDateTime fromDate = thruDate.plusYears(5);
+                return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
-        if(devitCounter >= 3 || creditCounter >= 3 ){
-            return new ResponseEntity<>("403 forbidden", HttpStatus.FORBIDDEN);
-        }else{
-            if (color == color1 && type == cardType1) {
-                Card card1;
-                card1 = new Card(client.getFirstName() + " " + client.getLastName(), cardType1, color1, cardNumber, cvv, thruDate, fromDate);
+            } else{
+                String cardNumber;
+
+                do{
+                    cardNumber = getCardNumbers();
+                }
+                while(cardRepository.findByNumber(cardNumber).getExistsCard());
+
+                int cvv = getRandomCvvNumber(100, 999);
+
+                LocalDateTime thruDate = LocalDateTime.now();
+                LocalDateTime fromDate = thruDate.plusYears(5);
+
+                Card card1 = new Card(client.getFirstName()+ " " + client.getLastName(), type, color, cardNumber, cvv, thruDate, fromDate, true);
                 client.addCard(card1);
                 cardRepository.save(card1);
-                return new ResponseEntity<>("201 created", HttpStatus.CREATED);
-            } if(color == color1 && type == cardType2){
-                Card card2;
-                card2 = new Card(client.getFirstName() + " " + client.getLastName(), cardType2, color1, cardNumber, cvv, thruDate, fromDate);
-                client.addCard(card2);
-                cardRepository.save(card2);
-                return new ResponseEntity<>("201 created", HttpStatus.CREATED);
-            } if(color == color2 && type == cardType1) {
-                Card card3;
-                card3 = new Card(client.getFirstName() + " " + client.getLastName(), cardType1, color2, cardNumber, cvv, thruDate, fromDate);
-                client.addCard(card3);
-                cardRepository.save(card3);
-                return new ResponseEntity<>("201 created", HttpStatus.CREATED);
-            } if(color == color2 && type == cardType2) {
-                Card card4;
-                card4 = new Card(client.getFirstName() + " " + client.getLastName(), cardType2, color2, cardNumber, cvv, thruDate, fromDate);
-                client.addCard(card4);
-                cardRepository.save(card4);
-                return new ResponseEntity<>("201 created", HttpStatus.CREATED);
-            } if(color == color3 && type == cardType1){
-                Card card5;
-                card5 = new Card(client.getFirstName() + " " + client.getLastName(), cardType1, color3, cardNumber, cvv, thruDate, fromDate);
-                client.addCard(card5);
-                cardRepository.save(card5);
-                return new ResponseEntity<>("201 created", HttpStatus.CREATED);
-            }else {
-                Card card6;
-                card6 = new Card(client.getFirstName() + " " + client.getLastName(), cardType2, color3, cardNumber, cvv, thruDate, fromDate);
-                client.addCard(card6);
-                cardRepository.save(card6);
-                return new ResponseEntity<>("201 created", HttpStatus.CREATED);
+                clientRepository.save(client);
+                return new ResponseEntity<>(HttpStatus.CREATED);
             }
         }
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 }

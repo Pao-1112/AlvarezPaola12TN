@@ -17,16 +17,12 @@ import javax.servlet.http.HttpSession;
 public class WebAuthorization extends WebSecurityConfigurerAdapter { // Maneja las reglas del servidor
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests()// ordenado de lo mas accesible a lo menos o mas especifico de un cliente o admin
+        http.authorizeRequests()
                 .antMatchers("/web/index.html", "/web/img/", "/web/js/index.js","/web/css/style.css", "/web/accounts.html","/web/js/accounts.js", "/favicon.ico").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/clients","/api/login").permitAll()
-                .antMatchers("/api/clients/current","/api/clients/current/accounts","/api/clients/current/cards","/api/accounts/{id}","/api/clients","/web/cards.html", "/web/js/cards.js","/web/create-cards.html", "/web/js/create-cards.js").hasAnyAuthority("ADMIN", "CLIENT")
+                .antMatchers(HttpMethod.POST,"/api/clients","/api/login", "/api/logout").permitAll()
+                .antMatchers(HttpMethod.POST,"/api/clients/current","/api/clients/current/accounts","/api/clients/current/cards").hasAnyAuthority("ADMIN","CLIENT")
+                .antMatchers("/api/clients/{id}","/api/accounts/{id}","/api/cards/{id}","/web/cards.html", "/web/js/cards.js","/web/create-cards.html", "/web/js/create-cards.js").hasAnyAuthority("ADMIN", "CLIENT")
                 .antMatchers("/h2-console/", "/rest/","/web/","/api/").hasAuthority("ADMIN");
-                /*.antMatchers("/web/index.html", "/web/css/", "/web/img/", "/web/js/").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/login", "/api/logout","/api/clients").permitAll()
-                .antMatchers("/web/admin").hasAuthority("ADMIN")
-                .antMatchers("/api/clients", "/api/clients/").hasAnyAuthority("ADMIN","CLIENT")
-                .antMatchers("/web/", "/web/css/").hasAnyAuthority("CLIENT", "ADMIN");*/
 
         http.formLogin()
                 .usernameParameter("email")

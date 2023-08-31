@@ -31,12 +31,6 @@ public class ClientControllers {
     public List<ClientDTO> getClients(){
         return clientRepository.findAll().stream().map(client->new ClientDTO(client)).collect(Collectors.toList());
     }
-
-    @RequestMapping("/admin")
-    public List<ClientDTO> getAdmin(){
-        return clientRepository.findAll().stream().map(admin->new ClientDTO(admin)).collect(Collectors.toList());
-    }
-
     @RequestMapping("/clients/{id}")
     public ResponseEntity<Object>getClient(@PathVariable long id, Authentication authentication){
         Client client = clientRepository.findByEmail(authentication.getName());
