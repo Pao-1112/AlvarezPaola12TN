@@ -15,7 +15,7 @@ public class CardDTO {
     private Integer cvv;
     private LocalDateTime fromDate;
     private LocalDateTime thruDate;
-    private Boolean existsCards = true;
+
     public CardDTO(Card card) {
         id = card.getId();
         cardHolder = card.getClient().getFirstName()+" "+ card.getClient().getLastName();
@@ -25,7 +25,6 @@ public class CardDTO {
         cvv = card.getCvv();
         fromDate = card.getFromDate();
         thruDate = card.getThruDate();
-        existsCards = card.getExistsCard();
     }
 
     public Long getId() {
@@ -59,7 +58,5 @@ public class CardDTO {
     public LocalDateTime getThruDate() {
         return thruDate;
     }
-
-    public Boolean getExistsCards() { return existsCards; }
 
 }

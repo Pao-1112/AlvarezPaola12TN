@@ -26,28 +26,16 @@ public class CardControllers {
     @Autowired
     ClientRepository clientRepository;
 
-    @RequestMapping("/cards")
-    public List<CardDTO> getCard(){
-        List<Card> listCard = cardRepository.findAll();
-        List<CardDTO> listCardDTO =
-                listCard
-                        .stream()
-                        .map(card -> new CardDTO(card))
-                        .collect(toList());
-
-        return listCardDTO;
-    }
-    @RequestMapping("/cards/{id}")
-    public CardDTO getCards(@PathVariable long id){
-        return new CardDTO(cardRepository.findById(id).orElse(null));
+    @RequestMapping("/clients/current/cards")
+    public List<CardDTO> getCardsCurrent(Authentication authentication){
+        Client client = clientRepository.findByEmail(authentication.getName());
+        List<CardDTO> currentCards = client.getCards().stream().map(CardDTO::new).collect(toList());
+        return currentCards;
     }
 
-    public int getRandomCardNumber(int min1, int max1){
+    public int getRandomCardNumber(int min1, int max1){ return (int)((Math.random() * (max1 - min1)) + min1); }
 
-        return (int)((Math.random() * (max1 - min1)) + min1);
-    }
-
-    public String getRandomCardNumber(){
+    public String getRandomNumberCard(){
 
         int cardRandomNumber = getRandomCardNumber(0001, 9999);
 
@@ -60,7 +48,7 @@ public class CardControllers {
 
         for(int i = 0; i <= 4; i++){
 
-            String numberSerie = getRandomCardNumber();
+            String numberSerie = getRandomNumberCard();
 
             cardNumber += ("-" + numberSerie);
         }
@@ -82,28 +70,37 @@ public class CardControllers {
             long devitCounter = cards.stream().filter(card -> card.getType() == CardType.DEBIT).count();
             long creditCounter = cards.stream().filter(card -> card.getType() == CardType.CREDIT).count();
 
-            String cardNumber;
+            if (devitCounter >= 3 || creditCounter >= 3) {
+                return new ResponseEntity<>("403 forbidden", HttpStatus.FORBIDDEN);
+            } else {
+                if (!cards.stream().filter(card -> card.getType().equals(cardType)).filter(card -> card.getColor().equals(cardColor)).collect(toList()).isEmpty()) {
+                    return new ResponseEntity<>("Option selected invalid, you already have a card of this type.", HttpStatus.FORBIDDEN);
+                } else {
+                    //Creo un numero de tarjeta y verifico que no exita en la base de datos
+                    String number1;
 
-            do{
-                cardNumber = getCardNumbers();
-            }
-            while(cardRepository.findByNumber(cardNumber).getExistsCard());
+                    do{
+                        number1 = getCardNumbers();
 
-            if(devitCounter >= 3 || creditCounter >= 3){
-                return new ResponseEntity<>("403 forbidden ", HttpStatus.FORBIDDEN);
+                    } while (cardRepository.existsByNumber(number1));
+                    //  Puedo utilizar ciclos para consultar de en vez de lo contenido
+                    //  en el while (para no ir a la base de datos):
+                    //if(!cards.stream().filter(card -> card.getNumber().equals(number1)).collect(toList()).isEmpty());
 
-            } else{
-                if(!cards.stream().filter(card -> card.getType().equals(cardType)).filter(card -> card.getColor().equals(cardColor)).collect(toList()).isEmpty()){
-                    return  new ResponseEntity<>("Option selected invalid, you alredy have a card of this type", HttpStatus.FORBIDDEN);
-                }else {
-                    int cvv = getRandomCvvNumber(100, 999);
+                    //Creo un cvv y verifico que no exista en la base de datos
+                    int cvv1;
 
-                    Card card1 = new Card(client.getFirstName() + "" + client.getLastName(), cardType, cardColor, cardNumber, cvv,LocalDateTime.now().plusYears(5), LocalDateTime.now(), true);
-                    client.addCard(card1);
-                    cardRepository.save(card1);
-                    clientRepository.save(client);
+                    do{
+                        cvv1 = getRandomCvvNumber(100, 999);
 
-                    return new ResponseEntity<>("Card created successfull", HttpStatus.CREATED);
+                    }while (cardRepository.existsByCvv(cvv1));
+
+
+                    Card card = new Card(client.getFirstName() + " " + client.getLastName(), cardType, cardColor, number1,cvv1, LocalDateTime.now().plusYears(5), LocalDateTime.now());
+
+                    client.addCard(card);
+                    cardRepository.save(card);
+                    return new ResponseEntity<>("Card created successfully",HttpStatus.CREATED);
                 }
             }
         }

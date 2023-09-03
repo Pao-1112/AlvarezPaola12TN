@@ -1,6 +1,7 @@
-package com.mindhub.homebankig.controllers;
+  package com.mindhub.homebankig.controllers;
 
 import com.mindhub.homebankig.dtos.AccountDTO;
+import com.mindhub.homebankig.dtos.ClientDTO;
 import com.mindhub.homebankig.models.Account;
 import com.mindhub.homebankig.models.Client;
 import com.mindhub.homebankig.repositories.AccountRepository;
@@ -9,14 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 @RestController
 @RequestMapping("/api")
@@ -33,7 +33,7 @@ public class AccountControllers {
                 listAccount
                         .stream()
                         .map(account -> new AccountDTO(account))
-                        .collect(Collectors.toList());
+                        .collect(toList());
 
         return listAccountDTO;
     }
@@ -44,16 +44,35 @@ public class AccountControllers {
     public int getRandomNumber(int min, int max){
         return (int) ((Math.random() * (max - min) + min));
     }
+
+    @RequestMapping("/clients/current/accounts")
+    public List<AccountDTO> getCurrentAccounts(Authentication authentication){
+        return clientRepository
+                .findByEmail(authentication.getName())
+                .getAccounts()
+                .stream()
+                .map(AccountDTO::new)
+                .collect(toList());
+    }
     @PostMapping("/clients/current/accounts")
     public ResponseEntity<Account> registerAccount(Authentication authentication, Client client){
         client = clientRepository.findByEmail(authentication.getName());
+
         if (authentication != null){
             Account account;
-            int accountNumber = getRandomNumber(10000000, 99999999);
 
             if (client.getAccounts().size()>=3){
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+
             }else {
+                int accountNumber = getRandomNumber(10000000, 99999999);
+                String numAccount;
+
+                do{
+                    numAccount = Integer.toString(accountNumber);
+
+                }while(accountRepository.existsByNumber(numAccount));
+
                 account = new Account(("VIN-" + accountNumber), LocalDateTime.now(), 0d);
                 client.addAccount(account);
                 accountRepository.save(account);

@@ -18,7 +18,7 @@ public class Card {
     private Integer cvv;
     private LocalDateTime thruDate;
     private LocalDateTime fromDate;
-    private Boolean existsCard = true;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "client_id")
     private Client client;
@@ -26,7 +26,7 @@ public class Card {
     public Card() {
     }
 
-    public Card(String cardHolder, CardType type, CardColor color, String number, Integer cvv, LocalDateTime fromDate, LocalDateTime thruDate, Boolean existsCard) {
+    public Card(String cardHolder, CardType type, CardColor color, String number, Integer cvv, LocalDateTime fromDate, LocalDateTime thruDate) {
         this.cardHolder = cardHolder;
         this.type = type;
         this.color = color;
@@ -34,8 +34,8 @@ public class Card {
         this.cvv = cvv;
         this.fromDate = fromDate;
         this.thruDate = thruDate;
-        this.existsCard = existsCard;
     }
+
 
     public Long getId() {
         return id;
@@ -96,10 +96,6 @@ public class Card {
     public void setThruDate(LocalDateTime thruDate) {
         this.thruDate = thruDate;
     }
-
-    public Boolean getExistsCard() { return existsCard; }
-
-    public void setExistsCard(Boolean existsCard) { this.existsCard = existsCard; }
 
     public Client getClient() {
         return client;

@@ -34,9 +34,11 @@ public class AccountDTO {
     public LocalDateTime getDate() {
         return date;
     }
+
     public Double getBalance() {
         return balance;
     }
+
     public Set<TransactionDTO> getTransactions() {
         return transactions;
     }
