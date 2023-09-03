@@ -21,8 +21,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.mindhub.homebankig.models.TransactionType.CREDIT;
-import static  com.mindhub.homebankig.models.TransactionType.DEBIT;
 @RestController
 @RequestMapping("/api")
 public class TransactionControllers {

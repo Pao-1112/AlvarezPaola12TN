@@ -1,6 +1,5 @@
 package com.mindhub.homebankig.repositories;
 
-import com.mindhub.homebankig.models.Account;
 import com.mindhub.homebankig.models.Transaction;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;

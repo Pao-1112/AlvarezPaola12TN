@@ -1,7 +1,6 @@
   package com.mindhub.homebankig.controllers;
 
 import com.mindhub.homebankig.dtos.AccountDTO;
-import com.mindhub.homebankig.dtos.ClientDTO;
 import com.mindhub.homebankig.models.Account;
 import com.mindhub.homebankig.models.Client;
 import com.mindhub.homebankig.repositories.AccountRepository;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
