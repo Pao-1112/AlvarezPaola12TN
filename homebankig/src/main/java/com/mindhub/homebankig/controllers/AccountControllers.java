@@ -5,6 +5,7 @@ import com.mindhub.homebankig.models.Account;
 import com.mindhub.homebankig.models.Client;
 import com.mindhub.homebankig.repositories.AccountRepository;
 import com.mindhub.homebankig.repositories.ClientRepository;
+import com.mindhub.homebankig.repositories.TransactionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,8 @@ public class AccountControllers {
     private AccountRepository accountRepository;
     @Autowired
     private ClientRepository clientRepository;
+    @Autowired
+    private TransactionRepository transactionRepository;
     @RequestMapping("/accounts")
     public List<AccountDTO> getAccounts(){
 

@@ -64,7 +64,7 @@ public class TransactionControllers {
             Account sourceAccount = accountRepository.findByNumber(fromAccountNumber);
             Account targetAccount = accountRepository.findByNumber(toAccountNumber);
 
-            if(Double.isNaN(amount) || description.isEmpty() || fromAccountNumber.isEmpty() || toAccountNumber.isEmpty()){
+            if(Double.isNaN(amount) || amount < 0.0 || description.isEmpty() || fromAccountNumber.isEmpty() || toAccountNumber.isEmpty()){
                 //cuenta o descripcion vacia
                 return new ResponseEntity<>("403 the amount or the description are empty", HttpStatus.BAD_REQUEST);
             }
