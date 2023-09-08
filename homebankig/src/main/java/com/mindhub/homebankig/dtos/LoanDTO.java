@@ -2,20 +2,18 @@ package com.mindhub.homebankig.dtos;
 
 import com.mindhub.homebankig.models.Loan;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 public class LoanDTO {
     private Long id;
     private String name;
     private Double maxAmount;
-    private List<Integer> payments = new ArrayList<>();
+    private Set<Integer> payments;
 
     public LoanDTO(Loan loan) {
-        this.id = id;
-        this.name = name;
-        this.maxAmount = maxAmount;
-        this.payments = payments;
+        this.name = loan.getName();
+        this.maxAmount = loan.getMaxAmount();
+        this.payments = loan.getPayments();
     }
 
     public Long getId() {
@@ -30,7 +28,7 @@ public class LoanDTO {
         return maxAmount;
     }
 
-    public List<Integer> getPayments() {
+    public Set<Integer> getPayments() {
         return payments;
     }
 }

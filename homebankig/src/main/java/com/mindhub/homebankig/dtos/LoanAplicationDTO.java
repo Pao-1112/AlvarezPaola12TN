@@ -3,7 +3,7 @@ package com.mindhub.homebankig.dtos;
 import com.mindhub.homebankig.models.Loan;
 
 public class LoanAplicationDTO {
-    private String loanTypeId;
+    private long loanId;
     private Double amount;
     private Integer payments;
     private String toAccountNumber;
@@ -11,16 +11,14 @@ public class LoanAplicationDTO {
     public LoanAplicationDTO() {
     }
 
-    public LoanAplicationDTO(String loanTypeId, Double amount, Integer payments, String toAccountNumber) {
-        this.loanTypeId = loanTypeId;
+    public LoanAplicationDTO(long loanId, Double amount, Integer payments, String toAccountNumber) {
+        this.loanId = loanId;
         this.amount = amount;
         this.payments = payments;
         this.toAccountNumber = toAccountNumber;
     }
 
-    public String getLoanTypeId() {
-        return loanTypeId;
-    }
+    public long getLoanId() { return loanId; }
 
     public Double getAmount() {
         return amount;

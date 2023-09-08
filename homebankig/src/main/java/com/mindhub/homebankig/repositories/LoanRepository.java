@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.Set;
 
 public interface LoanRepository extends JpaRepository <Loan, Long>{
-    Loan findByName(String name);
+    Loan findById(long id);
 
 }

@@ -54,7 +54,7 @@ public class Loan {
     public Set<ClientLoan> getClientLoans() {
         return clientLoans;
     }
-    public void addClient(ClientLoan clientLoan){
+    public void addClientLoan(ClientLoan clientLoan){
         clientLoan.setLoan(this);
         this.clientLoans.add(clientLoan);
     }

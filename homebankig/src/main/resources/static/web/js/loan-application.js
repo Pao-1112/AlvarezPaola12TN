@@ -1,7 +1,7 @@
 Vue.createApp({
     data() {
         return {
-            loan: [],
+            loanTypes: [],
             loanTypeId: 0,
             payments: 0,
             paymentsList: [],
@@ -10,6 +10,7 @@ Vue.createApp({
             errorMsg: null,
             accountToNumber: "VIN",
             amount: 0,
+            totalLoan:[],
             fees: []
         }
     },
@@ -61,7 +62,7 @@ Vue.createApp({
                 })
         },
         changedType: function () {
-            this.paymentsList = this.loan.find(loanType => loanType.id == this.loanTypeId).payments;
+            this.paymentsList = this.loanTypes.find(loanType => loanType.id == this.loanTypeId).payments;
         },
         finish: function () {
             window.location.reload();

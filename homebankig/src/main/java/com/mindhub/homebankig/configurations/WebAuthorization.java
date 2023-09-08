@@ -20,7 +20,7 @@ public class WebAuthorization extends WebSecurityConfigurerAdapter { // Maneja l
         http.authorizeRequests()
                 .antMatchers("/web/index.html", "/web/img/", "/web/js/index.js","/web/css/style.css", "/web/accounts.html","/web/js/accounts.js", "/favicon.ico").permitAll()
                 .antMatchers(HttpMethod.POST,"/api/clients","/api/login", "/api/logout").permitAll()
-                .antMatchers(HttpMethod.POST,"/api/clients/current","/api/clients/current/accounts", "/api/transactions","/api/clients/current/cards", "/api/loans").hasAnyAuthority("ADMIN","CLIENT")
+                .antMatchers(HttpMethod.POST,"/api/clients/current","/api/clients/current/accounts", "/api/transactions","/api/clients/current/cards","/api/loans").hasAnyAuthority("ADMIN","CLIENT")
                 .antMatchers("/api/clients/{id}","/api/accounts/{id}","/api/cards/{id}", "/web/cards.html", "/web/js/cards.js","/web/create-cards.html", "/web/loan-application.html", "/web/js/create-cards.js","/web/js/loan-application.js","/web/transfers.html", "/web/js/transfers.js").hasAnyAuthority("ADMIN", "CLIENT")
                 .antMatchers("/h2-console/", "/rest/","/web/","/api/").hasAuthority("ADMIN");
 
