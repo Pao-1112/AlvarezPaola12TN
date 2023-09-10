@@ -63,10 +63,9 @@ public class CardControllers {
     public ResponseEntity<Object> registerCard(Authentication authentication,
                                                @RequestParam CardType cardType,
                                                @RequestParam CardColor cardColor){
-        Client client = clientRepository.findByEmail(authentication.getName());
-        Set<Card> cards = client.getCards();
-
         if (authentication != null){
+            Client client = clientRepository.findByEmail(authentication.getName());
+            Set<Card> cards = client.getCards();
             long devitCounter = cards.stream().filter(card -> card.getType() == CardType.DEBIT).count();
             long creditCounter = cards.stream().filter(card -> card.getType() == CardType.CREDIT).count();
 

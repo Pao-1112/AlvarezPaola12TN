@@ -40,10 +40,7 @@ public class AccountControllers {
     }
     @RequestMapping("/accounts/{id}")
     public AccountDTO getAccounts(@PathVariable long id){
-        return new AccountDTO(accountRepository.findById(id).orElse(null));
-    }
-    public int getRandomNumber(int min, int max){
-        return (int) ((Math.random() * (max - min) + min));
+        return new AccountDTO(accountRepository.findById(id));
     }
 
     @RequestMapping("/clients/current/accounts")
@@ -55,11 +52,16 @@ public class AccountControllers {
                 .map(AccountDTO::new)
                 .collect(toList());
     }
+
+    public int getRandomNumber(int min, int max){
+        return (int) ((Math.random() * (max - min) + min));
+    }
+
     @PostMapping("/clients/current/accounts")
-    public ResponseEntity<Account> registerAccount(Authentication authentication, Client client){
-        client = clientRepository.findByEmail(authentication.getName());
+    public ResponseEntity<Account> registerAccount(Authentication authentication){
 
         if (authentication != null){
+            Client client = clientRepository.findByEmail(authentication.getName());
             Account account;
 
             if (client.getAccounts().size()>=3){
@@ -79,7 +81,6 @@ public class AccountControllers {
                 accountRepository.save(account);
                 return new ResponseEntity<>(HttpStatus.CREATED);
             }
-        }
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
+        }return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 }

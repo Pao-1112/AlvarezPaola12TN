@@ -29,12 +29,16 @@ public class ClientControllers {
 
     @RequestMapping("/clients")
     public List<ClientDTO> getClients(){
-        return clientRepository.findAll().stream().map(client->new ClientDTO(client)).collect(Collectors.toList());
+        return clientRepository
+                .findAll()
+                .stream()
+                .map(client->new ClientDTO(client))
+                .collect(Collectors.toList());
     }
     @RequestMapping("/clients/{id}")
     public ResponseEntity<Object>getClient(@PathVariable long id, Authentication authentication){
         Client client = clientRepository.findByEmail(authentication.getName());
-        Account account = accountRepository.findById(id).orElse(null);
+        Account account = accountRepository.findById(id);
         if(account.getClient().equals(client)){
             AccountDTO accountDTO = new AccountDTO(account);
             return new ResponseEntity<>(accountDTO,HttpStatus.ACCEPTED);

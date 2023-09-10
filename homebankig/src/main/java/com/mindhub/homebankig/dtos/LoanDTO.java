@@ -11,6 +11,7 @@ public class LoanDTO {
     private Set<Integer> payments;
 
     public LoanDTO(Loan loan) {
+        this.id = loan.getId();
         this.name = loan.getName();
         this.maxAmount = loan.getMaxAmount();
         this.payments = loan.getPayments();
@@ -31,4 +32,5 @@ public class LoanDTO {
     public Set<Integer> getPayments() {
         return payments;
     }
+
 }

@@ -25,11 +25,14 @@ public class Loan {
     private Set<ClientLoan> clientLoans = new HashSet<>();
     public Loan() {
     }
-    public Loan(String name, Double maxAmount, Set<Integer> payments) {
+
+    public Loan(Long id, String name, Double maxAmount, Set<Integer> payments) {
+        this.id = id;
         this.name = name;
         this.maxAmount = maxAmount;
         this.payments = payments;
     }
+
     public Long getId() {
         return id;
     }

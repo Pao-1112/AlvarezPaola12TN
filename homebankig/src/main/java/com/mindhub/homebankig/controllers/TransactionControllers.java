@@ -44,12 +44,6 @@ public class TransactionControllers {
 
         return listTransactionDTO;
     }
-
-    @RequestMapping("/transactions/{id}")
-    public TransactionDTO getTransactions(@PathVariable long id){
-        return new TransactionDTO(transactionRepository.findById(id).orElse(null));
-    }
-
     @Transactional
     @PostMapping("/transactions")
     public ResponseEntity<Object> registerTransaction(Authentication authentication,
@@ -57,38 +51,49 @@ public class TransactionControllers {
                                                               @RequestParam String description,
                                                               @RequestParam String fromAccountNumber,
                                                               @RequestParam String toAccountNumber){
-        Client client = clientRepository.findByEmail(authentication.getName());
-
         if (authentication != null){
+            Client client = clientRepository.findByEmail(authentication.getName());
 
             Account sourceAccount = accountRepository.findByNumber(fromAccountNumber);
             Account targetAccount = accountRepository.findByNumber(toAccountNumber);
 
-            if(Double.isNaN(amount) || amount < 0.0 || description.isEmpty() || fromAccountNumber.isEmpty() || toAccountNumber.isEmpty()){
+            if(Double.isNaN(amount)){
+                return new ResponseEntity<>("The amount is empty", HttpStatus.FORBIDDEN);
+            }
+            if(amount <= 0.0){
+                return new ResponseEntity<>("Some of the Amount is not valid",HttpStatus.FORBIDDEN);
+            }
+            if(description.isEmpty()){
+                return new ResponseEntity<>("The description is empty.", HttpStatus.FORBIDDEN);
+            }
+            if(fromAccountNumber.isEmpty()){
+                return new ResponseEntity<>("The destination account is empty", HttpStatus.FORBIDDEN);
+            }
+            if(toAccountNumber.isEmpty()){
                 //cuenta o descripcion vacia
-                return new ResponseEntity<>("403 the amount or the description are empty", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("The origin account  is empty", HttpStatus.FORBIDDEN);
             }
             if(toAccountNumber.equals(fromAccountNumber)){
                 // Cuenta de origen igual a la de destino
-                return new ResponseEntity<>("403 source account is equal to destination account", HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>("Source account is equal to destination account", HttpStatus.FORBIDDEN);
             }
             if(targetAccount == null){
                 //La cuenta de origen no existe
-                return new ResponseEntity<>("403 the origin account does not exist",HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("The origin account does not exist",HttpStatus.FORBIDDEN);
             }
 
             //verifica si la cuenta pertenece al cliente logueado
             Set<Account> setNumberOrigin = client.getAccounts();
             if(setNumberOrigin.contains(toAccountNumber)){
-                return new ResponseEntity<>("403 unauthenticated account",HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity<>("Unauthenticated account",HttpStatus.FORBIDDEN);
             }
             //La cuenta destino no existe
             if (sourceAccount == null){
-                return new ResponseEntity<>("403 the destiny account does not exist", HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>("The destiny account does not exist", HttpStatus.FORBIDDEN);
             }
             //La cuenta de origen no tiene el monto para la transaccion
             if(targetAccount.getBalance() < amount || (amount <= 0)){
-                return new ResponseEntity<>("403 insufficient balance", HttpStatus.FORBIDDEN);
+                return new ResponseEntity<>("Insufficient balance", HttpStatus.FORBIDDEN);
             }
 
             Transaction devitTransaction = new Transaction(TransactionType.DEBIT, amount, sourceAccount.getNumber() + " " + description, LocalDateTime.now(), sourceAccount);
