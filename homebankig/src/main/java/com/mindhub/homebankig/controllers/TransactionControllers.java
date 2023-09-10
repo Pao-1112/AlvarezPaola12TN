@@ -81,7 +81,6 @@ public class TransactionControllers {
                 //La cuenta de origen no existe
                 return new ResponseEntity<>("The origin account does not exist",HttpStatus.FORBIDDEN);
             }
-
             //verifica si la cuenta pertenece al cliente logueado
             Set<Account> setNumberOrigin = client.getAccounts();
             if(setNumberOrigin.contains(toAccountNumber)){
@@ -96,17 +95,18 @@ public class TransactionControllers {
                 return new ResponseEntity<>("Insufficient balance", HttpStatus.FORBIDDEN);
             }
 
-            Transaction devitTransaction = new Transaction(TransactionType.DEBIT, amount, sourceAccount.getNumber() + " " + description, LocalDateTime.now(), sourceAccount);
+            Transaction devitTransaction = new Transaction(TransactionType.DEBIT, -amount,  sourceAccount.getNumber() + " " + description, LocalDateTime.now(), sourceAccount);
             Transaction creditTransaction = new Transaction(TransactionType.CREDIT, amount, targetAccount.getNumber()+" "+ description, LocalDateTime.now(),targetAccount);
 
             transactionRepository.save(devitTransaction);
             transactionRepository.save(creditTransaction);
 
-            Double auxOrigin = sourceAccount.getBalance()-amount;
-            Double auxDestiny = targetAccount.getBalance()+amount;
+            Double auxDestiny = sourceAccount.getBalance()+amount;
+            Double auxOrigin = targetAccount.getBalance()-amount;
 
-            targetAccount.setBalance(auxDestiny);
-            sourceAccount.setBalance(auxOrigin);
+
+            targetAccount.setBalance(auxOrigin);
+            sourceAccount.setBalance(auxDestiny);
 
             return new ResponseEntity<>("201 successful transaction",HttpStatus.CREATED);
 
