@@ -20,7 +20,7 @@ public class HomebankigApplication {
 
 		SpringApplication.run(HomebankigApplication.class, args);
 	}
-	@Autowired
+	/*@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Bean
 	public CommandLineRunner initData(ClientRepository clientRepository,
@@ -208,5 +208,5 @@ public class HomebankigApplication {
 			cardRepository.save(card4);
 
 		};
-	}
+	}*/
 }
