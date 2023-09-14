@@ -33,7 +33,7 @@ public class TransactionControllers {
     @Autowired
     private CardRepository cardRepository;
 
-    @RequestMapping("/transactions")
+    @GetMapping("/transactions")
     public List<TransactionDTO> getTransactions(){
         List<Transaction> listTransaction = transactionRepository.findAll();
         List<TransactionDTO> listTransactionDTO =

@@ -27,7 +27,7 @@ public class ClientControllers {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @RequestMapping("/clients")
+    @GetMapping("/clients")
     public List<ClientDTO> getClients(){
         return clientRepository
                 .findAll()
@@ -35,7 +35,7 @@ public class ClientControllers {
                 .map(client->new ClientDTO(client))
                 .collect(Collectors.toList());
     }
-    @RequestMapping("/clients/{id}")
+    @GetMapping("/clients/{id}")
     public ResponseEntity<Object>getClient(@PathVariable long id, Authentication authentication){
         Client client = clientRepository.findByEmail(authentication.getName());
         Account account = accountRepository.findById(id);
@@ -47,19 +47,20 @@ public class ClientControllers {
         }
     }
 
-    @RequestMapping("/clients/current")
+    @GetMapping("/clients/current")
     public ClientDTO getClient(Authentication authentication){
         Client client = clientRepository.findByEmail(authentication.getName());
         return  new ClientDTO(client);
     }
 
-    @RequestMapping(path = "/clients", method = RequestMethod.POST)
+    @PostMapping("/clients")
     public ResponseEntity<Object> register(@RequestParam String firstName,
                                            @RequestParam String lastName,
                                            @RequestParam String email,
                                            @RequestParam String password) {
+
         if (firstName.isBlank() || lastName.isBlank() || email.isBlank() || password.isBlank()) {//utilizo isBlamk y no is Empty ya que verifica que tenga texto, no este vacio y que no tenga espacios en blanco.
-            return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
+           return new ResponseEntity<>("Missing data", HttpStatus.FORBIDDEN);
         }
         if (clientRepository.findByEmail(email) !=  null) {
             return new ResponseEntity<>("Name already in use", HttpStatus.FORBIDDEN);

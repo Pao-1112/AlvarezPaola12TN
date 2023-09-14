@@ -2,6 +2,7 @@
 
 import com.mindhub.homebankig.dtos.AccountDTO;
 import com.mindhub.homebankig.models.Account;
+import com.mindhub.homebankig.models.Card;
 import com.mindhub.homebankig.models.Client;
 import com.mindhub.homebankig.repositories.AccountRepository;
 import com.mindhub.homebankig.repositories.ClientRepository;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
+import static com.mindhub.homebankig.utils.AccountUtils.getRandomAccountNumber;
 import static java.util.stream.Collectors.toList;
 
 @RestController
@@ -26,7 +29,7 @@ public class AccountControllers {
     private ClientRepository clientRepository;
     @Autowired
     private TransactionRepository transactionRepository;
-    @RequestMapping("/accounts")
+    @GetMapping("/accounts")
     public List<AccountDTO> getAccounts(){
 
         List<Account> listAccount = accountRepository.findAll();
@@ -38,12 +41,12 @@ public class AccountControllers {
 
         return listAccountDTO;
     }
-    @RequestMapping("/accounts/{id}")
+    @GetMapping("/accounts/{id}")
     public AccountDTO getAccounts(@PathVariable long id){
         return new AccountDTO(accountRepository.findById(id));
     }
 
-    @RequestMapping("/clients/current/accounts")
+    @GetMapping("/clients/current/accounts")
     public List<AccountDTO> getCurrentAccounts(Authentication authentication){
         return clientRepository
                 .findByEmail(authentication.getName())
@@ -53,33 +56,37 @@ public class AccountControllers {
                 .collect(toList());
     }
 
-    public int getRandomNumber(int min, int max){
+   /* public int getRandomAccountNumber(int min, int max){
         return (int) ((Math.random() * (max - min) + min));
-    }
+    }*/
 
     @PostMapping("/clients/current/accounts")
-    public ResponseEntity<Account> registerAccount(Authentication authentication){
+    public ResponseEntity<Object> registerAccount(Authentication authentication){
 
         if (authentication != null){
             Client client = clientRepository.findByEmail(authentication.getName());
-            Account account;
+            Set<Account> accounts = client.getAccounts();
 
             if (client.getAccounts().size()>=3){
                 return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 
             }else {
-                int accountNumber = getRandomNumber(10000000, 99999999);
+                int accountNumber = getRandomAccountNumber(10000000, 99999999);
                 String numAccount;
 
-                do{
+                if(accounts.stream().filter(account -> account.getNumber().equals(accountNumber)).collect(toList()).isEmpty()){
+
                     numAccount = Integer.toString(accountNumber);
+                    if(accounts.stream().filter(account-> account.getNumber().equals(numAccount)).collect(toList()).isEmpty()) {
 
-                }while(accountRepository.existsByNumber(numAccount));
+                        Account account = new Account(("VIN-" + accountNumber), LocalDateTime.now(), 0d);
+                        client.addAccount(account);
+                        accountRepository.save(account);
+                        return new ResponseEntity<>(HttpStatus.CREATED);
 
-                account = new Account(("VIN-" + accountNumber), LocalDateTime.now(), 0d);
-                client.addAccount(account);
-                accountRepository.save(account);
-                return new ResponseEntity<>(HttpStatus.CREATED);
+                    }return new ResponseEntity<>("Option selected invalid, you already have a card of this type.", HttpStatus.FORBIDDEN);
+
+                } return new ResponseEntity<>("Option selected invalid, you already have a card of this type.", HttpStatus.FORBIDDEN);
             }
         }return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }

@@ -40,7 +40,7 @@ public class LoanControllers {
     }
 
     @Transactional
-    @RequestMapping(value = "/loans", method = RequestMethod.POST)
+    @PostMapping("/loans")
     public ResponseEntity<String> registerLoan(Authentication authentication, @RequestBody LoanAplicationDTO loanAplicationDTO) {
 
         if(authentication !=null){

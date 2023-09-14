@@ -4,6 +4,7 @@ import com.mindhub.homebankig.dtos.CardDTO;
 import com.mindhub.homebankig.models.*;
 import com.mindhub.homebankig.repositories.CardRepository;
 import com.mindhub.homebankig.repositories.ClientRepository;
+import com.mindhub.homebankig.utils.CardUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,14 +27,14 @@ public class CardControllers {
     @Autowired
     ClientRepository clientRepository;
 
-    @RequestMapping("/clients/current/cards")
+    @GetMapping("/clients/current/cards")
     public List<CardDTO> getCardsCurrent(Authentication authentication){
         Client client = clientRepository.findByEmail(authentication.getName());
         List<CardDTO> currentCards = client.getCards().stream().map(CardDTO::new).collect(toList());
         return currentCards;
     }
 
-    public int getRandomCardNumber(int min1, int max1){ return (int)((Math.random() * (max1 - min1)) + min1); }
+    /*public int getRandomCardNumber(int min1, int max1){ return (int)((Math.random() * (max1 - min1)) + min1); }
 
     public String getRandomNumberCard(){
 
@@ -57,7 +58,7 @@ public class CardControllers {
 
     public int getRandomCvvNumber(int min2, int max2){
         return (int) ((Math.random() * (max2 - min2)) + min2);
-    }
+    }*/
 
     @PostMapping("/clients/current/cards")
     public ResponseEntity<Object> registerCard(Authentication authentication,
@@ -75,33 +76,47 @@ public class CardControllers {
                 if (!cards.stream().filter(card -> card.getType().equals(cardType)).filter(card -> card.getColor().equals(cardColor)).collect(toList()).isEmpty()) {
                     return new ResponseEntity<>("Option selected invalid, you already have a card of this type.", HttpStatus.FORBIDDEN);
                 } else {
+
+                    String cardNumber;
+                    cardNumber = CardUtils.getCardNumbers();
+
+                    if(cards.stream().filter(card -> card.getNumber().equals(cardNumber)).collect(toList()).isEmpty()){
+
+                        Integer cvv1 = CardUtils.getRandomNumberCvvCard();
+
+                        if (cards.stream().filter(card -> card.getCvv().equals(cvv1)).collect(toList()).isEmpty()) {
+
+                            Card card = new Card(client.getFirstName() + " " + client.getLastName(), cardType, cardColor, cardNumber, cvv1, LocalDateTime.now().plusYears(5), LocalDateTime.now());
+
+                            client.addCard(card);
+                            cardRepository.save(card);
+                            return new ResponseEntity<>("Card created successfully", HttpStatus.CREATED);
+                        }
+                    }
                     //Creo un numero de tarjeta y verifico que no exita en la base de datos
-                    String number1;
+                    //do{
+                        //cardNumber = CardUtils.getCardNumbers();
 
-                    do{
-                        number1 = getCardNumbers();
-
-                    } while (cardRepository.existsByNumber(number1));
+                   // } while (cardRepository.existsByNumber(cardNumber));
                     //  Puedo utilizar ciclos para consultar de en vez de lo contenido
                     //  en el while (para no ir a la base de datos):
                     //if(!cards.stream().filter(card -> card.getNumber().equals(number1)).collect(toList()).isEmpty());
 
                     //Creo un cvv y verifico que no exista en la base de datos
-                    int cvv1;
+                    //int cvv1;
 
-                    do{
-                        cvv1 = getRandomCvvNumber(100, 999);
+                    //do{
+                        //cvv1 = CardUtils.getRandomNumberCvvCard();
 
-                    }while (cardRepository.existsByCvv(cvv1));
+                    //}while (cardRepository.existsByCvv(cvv1));
 
+                    //Card card = new Card(client.getFirstName() + " " + client.getLastName(), cardType, cardColor, cardNumber , cvv1, LocalDateTime.now().plusYears(5), LocalDateTime.now());
 
-                    Card card = new Card(client.getFirstName() + " " + client.getLastName(), cardType, cardColor, number1,cvv1, LocalDateTime.now().plusYears(5), LocalDateTime.now());
-
-                    client.addCard(card);
-                    cardRepository.save(card);
-                    return new ResponseEntity<>("Card created successfully",HttpStatus.CREATED);
+                    //client.addCard(card);
+                    //cardRepository.save(card);
+                    //return new ResponseEntity<>("Card created successfully",HttpStatus.CREATED);
                 }
-            }
+            }return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }
         return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
