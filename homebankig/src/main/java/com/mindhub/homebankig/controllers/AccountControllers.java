@@ -72,19 +72,14 @@ public class AccountControllers {
 
             }else {
                 int accountNumber = getRandomAccountNumber(10000000, 99999999);
-                String numAccount;
+                String numAccount = Integer.toString(accountNumber);
 
-                if(accounts.stream().filter(account -> account.getNumber().equals(accountNumber)).collect(toList()).isEmpty()){
+                if(accounts.stream().filter(account -> account.getNumber().equals(numAccount)).collect(toList()).isEmpty()){
 
-                    numAccount = Integer.toString(accountNumber);
-                    if(accounts.stream().filter(account-> account.getNumber().equals(numAccount)).collect(toList()).isEmpty()) {
-
-                        Account account = new Account(("VIN-" + accountNumber), LocalDateTime.now(), 0d);
-                        client.addAccount(account);
-                        accountRepository.save(account);
-                        return new ResponseEntity<>(HttpStatus.CREATED);
-
-                    }return new ResponseEntity<>("Option selected invalid, you already have a card of this type.", HttpStatus.FORBIDDEN);
+                    Account account = new Account(("VIN-" + accountNumber), LocalDateTime.now(), 0d);
+                    client.addAccount(account);
+                    accountRepository.save(account);
+                    return new ResponseEntity<>(HttpStatus.CREATED);
 
                 } return new ResponseEntity<>("Option selected invalid, you already have a card of this type.", HttpStatus.FORBIDDEN);
             }
